@@ -1,53 +1,28 @@
 // Your code here.
-const video = document.querySelector('.viewer');
-const progress = document.querySelector('.progress__filled');
-const toggleButton = document.querySelector('.toggle');
-const volumeSlider = document.querySelector('input[name="volume"]');
-const playbackRateSlider = document.querySelector('input[name="playbackRate"]');
-const skipButtons = document.querySelectorAll('.player__button[data-skip]');
-
-// Play/Pause functionality
-function togglePlay() {
-  if (video.paused) {
-    video.play();
-  } else {
-    video.pause();
-  }
-}
-
-// Update the play/pause button text
-function updateToggleButton() {
-  toggleButton.textContent = video.paused ? '►' : '❚ ❚';
-}
-
-// Update the progress bar
-function updateProgress() {
-  const percent = (video.currentTime / video.duration) * 100;
-  progress.style.flexBasis = `${percent}%`;
-}
-
-// Update the video volume
-function updateVolume() {
-  video.volume = volumeSlider.value;
-}
-
-// Update the video playback speed
-function updatePlaybackRate() {
-  video.playbackRate = playbackRateSlider.value;
-}
-
-// Skip the video forward or backward
-function skipVideo() {
-  const skipSeconds = parseFloat(this.dataset.skip);
-  video.currentTime += skipSeconds;
-}
-
-// Add event listeners
-video.addEventListener('click', togglePlay);
-toggleButton.addEventListener('click', togglePlay);
-video.addEventListener('play', updateToggleButton);
-video.addEventListener('pause', updateToggleButton);
-video.addEventListener('timeupdate', updateProgress);
-volumeSlider.addEventListener('input', updateVolume);
-playbackRateSlider.addEventListener('input', updatePlaybackRate);
-skipButtons.forEach(button => button.addEventListener('click', skipVideo));
+const slider = document.querySelector('.items');
+	let isDown = false;
+	let startX;
+	let scrollLeft;
+	
+	slider.addEventListener('mousedown', (e) => {
+	  isDown = true;
+	  slider.classList.add('active');
+	  startX = e.pageX - slider.offsetLeft;
+	  scrollLeft = slider.scrollLeft;
+	});
+	// slider.addEventListener('mouseleave', () => {
+	//   isDown = false;
+	//   slider.classList.remove('active');
+	// });
+	slider.addEventListener('mouseup', () => {
+	  isDown = false;
+	  slider.classList.remove('active');
+	});
+	slider.addEventListener('mousemove', (e) => {
+	  if(!isDown) return;
+	  e.preventDefault();
+	  const x = e.pageX - slider.offsetLeft;
+	  const walk = (x - startX) ; //scroll-fast
+	  slider.scrollLeft = scrollLeft - walk;
+	  console.log(walk);
+	});
