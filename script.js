@@ -1,30 +1,53 @@
 // Your code here.
-const slider = document.querySelector('.items');
-    let isDown = false;
-    let startX;
-    let scrollLeft;
+const video = document.querySelector('.viewer');
+const progress = document.querySelector('.progress__filled');
+const toggleButton = document.querySelector('.toggle');
+const volumeSlider = document.querySelector('input[name="volume"]');
+const playbackRateSlider = document.querySelector('input[name="playbackRate"]');
+const skipButtons = document.querySelectorAll('.player__button[data-skip]');
 
-    slider.addEventListener('mousedown', (event) => {
-        isDown = true;
-        slider.classList.add('active')
-        startX = event.pageX - slider.offsetLeft;
-        scrollLeft = slider.scrollLeft;
-    });
-    
-    slider.addEventListener('mouseleave', () => {
-        isDown = false;
-        slider.classList.remove('active')
-    });
+// Play/Pause functionality
+function togglePlay() {
+  if (video.paused) {
+    video.play();
+  } else {
+    video.pause();
+  }
+}
 
-    slider.addEventListener('mouseup', () => {
-        isDown = false;
-        slider.classList.remove('active')
-    });
+// Update the play/pause button text
+function updateToggleButton() {
+  toggleButton.textContent = video.paused ? '►' : '❚ ❚';
+}
 
-    slider.addEventListener('mousemove', (event) => {
-        if (!isDown) return;
-        event.preventDefault();
-        const x = event.pageX - slider.offsetLeft;
-        const walk = (x - startX)*2;
-        slider.scrollLeft = scrollLeft - walk;
-    });
+// Update the progress bar
+function updateProgress() {
+  const percent = (video.currentTime / video.duration) * 100;
+  progress.style.flexBasis = `${percent}%`;
+}
+
+// Update the video volume
+function updateVolume() {
+  video.volume = volumeSlider.value;
+}
+
+// Update the video playback speed
+function updatePlaybackRate() {
+  video.playbackRate = playbackRateSlider.value;
+}
+
+// Skip the video forward or backward
+function skipVideo() {
+  const skipSeconds = parseFloat(this.dataset.skip);
+  video.currentTime += skipSeconds;
+}
+
+// Add event listeners
+video.addEventListener('click', togglePlay);
+toggleButton.addEventListener('click', togglePlay);
+video.addEventListener('play', updateToggleButton);
+video.addEventListener('pause', updateToggleButton);
+video.addEventListener('timeupdate', updateProgress);
+volumeSlider.addEventListener('input', updateVolume);
+playbackRateSlider.addEventListener('input', updatePlaybackRate);
+skipButtons.forEach(button => button.addEventListener('click', skipVideo));
